@@ -5,7 +5,7 @@ Computational Genomics Final
 CreateTestOutput.py
 
 COMMAND:
-python CreateInputData.py n k input.fa output.fa n
+python CreateInputData.py k input.fa output.fa n
 
 Takes a genome (all caps no spaces) and
 randomly samples n reads of length k from that genome.
@@ -13,7 +13,6 @@ randomly samples n reads of length k from that genome.
 
 # Imports
 import sys
-import random
 
 '''
 Opens file into a string.
@@ -25,18 +24,16 @@ def openFile(infile):
     return data
 
 '''
-Samples n random reads of length k from that genome.
+Samples n random reads of length k from that genome (all kmers).
 @param data is the input genome.
-@param n is the number of sample reads.
 @param k is the length of reads to sample.
 @return reads of that data.
 '''
-def sampleReads(data, n, k):
+def sampleReads(data, k):
     reads = []
-    for i in range(n):
-        start = random.randint(0,len(data)-100)
+    for i in range(len(data)-k+1):
         reads.append('>' + str(i+1))
-        reads.append(data[start:start+100])
+        reads.append(data[i:i+100])
     return '\n'.join(reads)
 
 '''
@@ -54,10 +51,9 @@ Main function
 '''
 def main():
     # Open file
-    data = openFile(sys.argv[3])
+    data = openFile(sys.argv[2])
     # Get random reads
-    reads = sampleReads(data,int(sys.argv[1]),int(sys.argv[2]))
+    reads = sampleReads(data,int(sys.argv[1]))
     # Output file
-    outputFile(sys.argv[4],reads)
-
+    outputFile(sys.argv[3],reads)
 main()

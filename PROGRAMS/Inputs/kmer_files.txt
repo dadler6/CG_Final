@@ -1,0 +1,3 @@
+../DATA/KMers/mp13mp18_kmers.fa
+../DATA/KMers/papayamelieravirus_kmers.fa
+../DATA/KMers/wuhanaphivirus_kmers.fa
