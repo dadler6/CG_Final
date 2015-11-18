@@ -5,7 +5,7 @@ Computational Genomics Final
 CreateTestOutput.py
 
 COMMAND:
-python CreateTestOutput.py input.txt output.txt
+python CreateTestOutput.py input.fa output.fa
 
 Given a file of data with A's,T's,C's,G's representing a genome, this file
 creates a continuous sequence of reads by taking away extraneous whitespace.
