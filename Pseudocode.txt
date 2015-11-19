@@ -1,0 +1,19 @@
+Idea for the algorithm...based on paper.
+
+1. Randomly parition reads into contigs.  alpha contigs initially.
+   for each read:
+
+    
+
+
+2. For each read.  Compute a mapping to see whether we should move the read to a difference sequence
+   p(s,o|y*)
+
+
+
+3. Once we compute the reads we perform a consensus sequence step.  Update b_so for every spot
+
+
+
+4. Chef if a merge p(s|o,y)
+
