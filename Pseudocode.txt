@@ -1,17 +1,18 @@
 Idea for the algorithm...based on paper.
 
-I. Initialization
+I. Initialization  (fd)
 	a. function that randomly partitions reads into contigs.
 	b. function that for each contig, randomly places each read to a particular position in the contig from 0 to n-k+1. 
 	c. initalize alpha contig lists of length N. (N = 10 kb?) 
 	d. call consensus sequence function to initialize contig sequence.	
 
+		- incorporate prior on s when initializing reads to contigs (i.e. more reads should go to contigs 1,2,3 and less on the rest). 
 
-II. Consensus Sequence Step
+II. Consensus Sequence Step (dan)
 	a. simple max consensus nucleotide function
 
 
-III. Read Mapping
+III. Read Mapping (farhan)
 	i. p(s, o, y | .) 
 
 	ii. functions
@@ -23,10 +24,10 @@ III. Read Mapping
 	iii. computing p(s,o | y*, . ) using approximate inference
 		a. metropolis hastings function
 
-IV. Merge
+IV. Merge (dan)
 	a. merge check function (looks at overlaps at ends of contigs to determine if merge is necessary. use 15 k-mer overlap)
 
-v. Likelihood
+v. Likelihood (farhan)
 	a. compute likelihood.
 
 algorithm on a high level:
