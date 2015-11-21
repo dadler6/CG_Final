@@ -38,3 +38,76 @@ algorithm on a high level:
 		check if you need to merge
 		check likelihood.  
 
+
+===================================================
+
+Pseudocode
+
+def _process():
+	store reads in a list
+	randomly partition reads into 7 clusters where each cluster corresponds to the reads that make a contig (each cluster is a list)
+	for each contig
+		randomly partition reads to a position from 0 to n-k+1 (we will use a dictionary mapping reads to position)
+	append reads_to_positions_dictionary to list where each index corresponds to dictionary for a specific contig
+	return list
+
+def _consensus_sequence(reads_to_positions_dictionary):	
+	return updated_contig_sequence
+
+
+def _read_mapping():
+	return list # same structure as what process returns
+
+# ---------------------------------
+# helper functions for read_mapping
+def _compute_p_o():
+	return p
+
+def _compute_p_s():
+	return p
+
+def _compute_p_x_y():
+	return p
+
+def _compute_p_o_s_y():
+	return p
+
+def _compute_y_star():
+	return y_star, s, o # optimal sequence alignment of x to a contig, contig num, offset in contig 
+
+def _compute_hamming_distance(sequence_one, sequence_two):
+	return dist
+
+def _metropolis_hastings():
+	return boolean
+
+# ---------------------------------
+
+def _merge_contigs():
+	return list_updated_contigs
+
+def _merge_check_global():
+	# call this function in main. this function will check if any two contigs need to be merged. 
+	# if two contigs need to be merged, it will call _merge_contigs.
+	# if no contigs need to be merged, it will do nothing.
+
+def _merge_check_local(contig_one, contig_two):
+	return boolean (If true, merge suffix of contig_one to prefix of contig_two)
+
+
+def _likelihood():
+	return likelihood
+
+
+def _main():
+	list = _process()
+	contigs_list = []
+	for l in list: contigs_list.append(_consensus_sequence(l)) # append updated contig sequences to list
+	likelihood = 0
+	while (delta likelihood > 1):
+		call read mapping function
+		call update_consensus_sequence			
+		call _merge_check_global
+		likelihood = _likelihood()
+
+
