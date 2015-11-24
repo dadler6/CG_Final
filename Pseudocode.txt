@@ -26,6 +26,7 @@ III. Read Mapping (farhan)
 
 IV. Merge (dan)
 	a. merge check function (looks at overlaps at ends of contigs to determine if merge is necessary. use 15 k-mer overlap)
+	b. Also completes merge as necessary
 
 v. Likelihood (farhan)
 	a. compute likelihood.
@@ -83,16 +84,19 @@ def _metropolis_hastings():
 
 # ---------------------------------
 
-def _merge_contigs():
+def _merge_contigs(contigs_list, check_dictionary):
+	# The check dictionary is formatted as [[contig1,contig2]: True/False] (true if contig1/contig2 should be
+	  merged, otherwise false
 	return list_updated_contigs
 
-def _merge_check_global():
+def _merge_check_global(contigs_list):
 	# call this function in main. this function will check if any two contigs need to be merged. 
 	# if two contigs need to be merged, it will call _merge_contigs.
 	# if no contigs need to be merged, it will do nothing.
+	return new_contigs_list
 
 def _merge_check_local(contig_one, contig_two):
-	return boolean (If true, merge suffix of contig_one to prefix of contig_two)
+	return boolean (actually going to do 0,1) (If true, merge suffix of contig_one to prefix of contig_two)
 
 
 def _likelihood():
