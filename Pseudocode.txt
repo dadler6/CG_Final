@@ -98,6 +98,9 @@ def _merge_check_global(contigs_list):
 def _merge_check_local(contig_one, contig_two):
 	return boolean (actually going to do 0,1) (If true, merge suffix of contig_one to prefix of contig_two)
 
+def change_reads_on_merge(reads_dict,contig1_pos,contig2_pos,new_pos, contig1_length)
+	return new reads dictionary
+
 
 def _likelihood():
 	return likelihood
