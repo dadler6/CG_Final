@@ -80,7 +80,3 @@ def compute_new_contigs(frequency_info):
         new_contigs.append(curr)
 
     return new_contigs
-
-
-
-
