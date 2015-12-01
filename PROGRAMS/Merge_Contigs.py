@@ -10,6 +10,12 @@ Library for contig merging.  Contains 3 methods:
 
 NEED: To somehow look at merged "paths" (meaning more than 2 contigs merged at once)...unless we can make
       make this not happen
+
+NEED: To look at if there is a contig that aligns to two other contigs what happens
+
+IDEA for this.  Keep track of contigs to be merged in a list.  If it appears in a list that it will be merged
+look at how it would be merged twice.  I think I need like a merge 'prep' function step, where I look at how the merges
+would occur.  Think I'm going to write this function with a test case.
 '''
 
 # IMPORTS

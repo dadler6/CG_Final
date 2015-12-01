@@ -25,7 +25,7 @@ Main function to compute new consensus sequence.
 Creates data structure object and iterates through each read to 
 get a consensus sequence information.
 
-@param reads_dict is a current dictionary with {read : [s, o]}
+@param reads_dict is a current dictionary with {read : [[s1, o1],...]}
 
 @return new_contig_sequence
 '''
@@ -35,18 +35,19 @@ def consensus_sequence(reads_dict):
 
     # For each read
     for r in reads_dict:
-        s = reads_dict[r][0]
-        o = reads_dict[r][1]
-        # Check if contig number is in structure
-        if contig not in frequency_info:
-            frequency_info[s] = {}
-        for nt in r:
-            # Check if offset in the contig number dictionary
-            if o not in frequency_info[s]:
-                frequency_info[s][o] = Counter()
-            # Add counter to that nucleotide in the contig at an offset
-            frequency_info[s][o][nt] += 1
-            o += 1
+        for l in reads_dict[r]:
+            s = l[0]
+            o = l[1]
+            # Check if contig number is in structure
+            if s not in frequency_info:
+                frequency_info[s] = {}
+            for nt in r:
+                # Check if offset in the contig number dictionary
+                if o not in frequency_info[s]:
+                    frequency_info[s][o] = Counter()
+                # Add counter to that nucleotide in the contig at an offset
+                frequency_info[s][o][nt] += 1
+                o += 1
 
     # Send dictionary to compute the new contigs
     return compute_new_contigs(frequency_info)
@@ -63,18 +64,20 @@ def compute_new_contigs(frequency_info):
     # New list
     new_contigs = []
 
-    # Get sorted list of contigs
-    contigs = frequency_info.keys().sort()
-
+    # Get contigs
+    contigs = frequency_info.keys()
+    contigs.sort()
+    print(frequency_info)
+    print('')
     # For each contig
     for s in contigs:
         # Start new contig
         curr = ''
-        # Get offsets list
-        offsets = frequency_info[s].keys().sort()
+        offsets = frequency_info[s].keys()
+        offsets.sort()
         for o in offsets:
             # Get most common nucleotide at certain (s,o)
-            nt = frequency_info[s][o].most_common(0)
+            nt = frequency_info[s][o].most_common(1)
             curr += nt[0][0]
 
         new_contigs.append(curr)
