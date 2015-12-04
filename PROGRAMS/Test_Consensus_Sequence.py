@@ -8,7 +8,7 @@ Tests for Consensus Sequencing.
 import unittest
 import Consensus_Sequence as cs 
 
-class Tesst_Consensus_Seuqence(unittest.TestCase):
+class Test_Consensus_Seuqence(unittest.TestCase):
 
     # Test with one contig
     def test_single_contig_1(self):
