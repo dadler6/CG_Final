@@ -27,7 +27,7 @@ get a consensus sequence information.
 
 @param reads_dict is a current dictionary with {read : [[s1, o1],...]}
 
-@return new_contig_sequence
+@return the frequency information for each contig
 '''
 def consensus_sequence(reads_dict):
     # Object
@@ -50,7 +50,7 @@ def consensus_sequence(reads_dict):
                 o += 1
 
     # Send dictionary to compute the new contigs
-    return compute_new_contigs(frequency_info)
+    return frequency_info
 
 '''
 Compute new contigs.
@@ -67,8 +67,7 @@ def compute_new_contigs(frequency_info):
     # Get contigs
     contigs = frequency_info.keys()
     contigs.sort()
-    print(frequency_info)
-    print('')
+
     # For each contig
     for s in contigs:
         # Start new contig
