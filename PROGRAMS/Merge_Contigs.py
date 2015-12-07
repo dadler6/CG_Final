@@ -158,7 +158,7 @@ def trace_contigs(bbl):
         contigs[i].insert(0,[curr, 0])
         i += 1
 
-    return list(reversed(contigs))
+    return list(contigs)
 
 '''
 Perform merges
