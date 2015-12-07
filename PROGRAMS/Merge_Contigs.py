@@ -31,6 +31,8 @@ Run a merge contigs with default overlap_length of 15.
 '''
 def run_merge(contigs, reads):
     contig_dict = merge_check_global(contigs)
+    if contig_dict == []:
+        return contigs, reads
     bbr = suffix_filter(contigs_dict)
     bbl = extract_bbl(bbr)
     contig_trace = trace_contigs(bbl)
