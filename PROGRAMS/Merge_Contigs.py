@@ -18,10 +18,8 @@ look at how it would be merged twice.  I think I need like a merge 'prep' functi
 would occur.  Think I'm going to write this function with a test case.
 '''
 
-# IMPORTS
-import itertools
-
 # Global variables
+from collections import Counter
 
 '''
 Checks all nchoosek(contig_length,2) contigs using merge_check_local() to see which contigs
@@ -39,19 +37,18 @@ def merge_check_global(contig_list, OVERLAP_LENGTH = 15):
     contig_dict = {}
     # Go through each contig
     for suffix in contig_list:
-        # Check if a merge is needed using merge_local()
+        # Check if a merge is needed
         contig_dict[suffix] = Counter()
-        for prefix in conting_list:
+        for prefix in contig_list:
             if prefix != suffix:
                 contig_dict[suffix][prefix] = suffixPrefixMatch(suffix, prefix, OVERLAP_LENGTH)
-        merge += contig_dict[list(pair)]
+                merge += contig_dict[suffix][prefix]
 
     # Check if merge_contigs needs to occur
     if merge > 0:
         return contig_dict
     else:
         return []
-
 
 '''
 Finds the longest suffix that is a prefix of
@@ -87,72 +84,134 @@ def suffix_filter(contig_dictionary):
     for suffix in contig_dictionary:
         if len(contig_dictionary[suffix]) > 0:
             c = contig_dictionary[suffix].most_common(1)
-            bbr[c] = [c[[0][0], c[0][1]]
-
+            if c[0][1] > 0:
+                bbr[suffix] = [c[0][0], c[0][1]]
     return bbr
 
 '''
-Compute ordering of new  contigs.
+Go through best buddy list.
+If entry exists as bbr twice, we take the one with the higher score.
 
-@param bbr is the best budy dicitonary
-@return a list of triplets that show [(contig, next, overlap)...]
+Delete the other one.
+@param bb is the best buddy list.
+@return a bb list with only relevant terms
 '''
-def compute_order(bbr):
-    # Somehow take walk through things and find orders
-    pass
+def extract_bbl(bbr):
+    bbl_set = set()
+    bbl = {}
+    for p in bbr:
+        bbl_set.add(bbr[p][0])
+    for l in bbl_set:
+        c = Counter()
+        for p in bbr:
+            if bbr[p][0] == l:
+                c[p] = bbr[p][1]
+        m = c.most_common(2)
+        if len(m) > 1 and m[0][1] == m[1][1]:
+            pass
+        else:
+            bbl[l] = [m[0][0],m[0][1]]
+    return bbl
 
 '''
-Perform a merge contigs.
-Go through the entered dictionary with a 1 if a contigs needs to merged and 2 otherwise
+Trace the new contigs.
 
-@param contig_list is the list of contigs
-@param contig_dictionary is a dicitonary with key = [contig1,contig2] and value
-@param reads_dict is a dictionary of each read as: {read: [[s_0,o_0]...}
-
-@return [new_contig_list, new_reads_dict] is the new list of contgs
+@param bbl is bbl dictonary
+@return the contigs
 '''
-def merge_contigs(contig_list, contig_dictionary, reads_dict, OVERLAP_LENGTH = 15):
-    # Create new list
-    new_contig_list = []
-    # Go through each pair
-    for pair in contig_dictionary:
-        # If a merge needs to take place between two contigs
-        if contig_dictionary[pair] == 1:
-            # Get first contig
-            contig1 = contig_list[pair[0]]
-            # Get second contig
-            contig2 = contig_list[pair[1]]
-            # Merge with overlap as OVERLAP_LENGTH
-            new_contig_list.append(contig1 + contig2[OVERLAP_LENGTH:])
-            # Change reads dict
-            new_reads_dict = change_reads_on_merge(reads_dict, pair[0], pair[1], len(new_contig_list) - 1, len(contig1))
+def trace_contigs(bbl):
+    right = set()
+    left = set(bbl.keys())
+    # Figure out ending points
+    for p in bbl:
+        right.add(bbl[p][0])
+    end = left.difference(right)
+    # Traceback
+    contigs = [None]*len(end)
+    i = 0
+    for e in end:
+        curr = e
+        contigs[i] = []
+        while curr in bbl:
+            contigs[i].insert(0,[curr, bbl[curr][1]])
+            curr = bbl[curr][0]
+        contigs[i].insert(0,[curr, 0])
+        i += 1
 
-    return [new_contig_list, new_reads_dict]
+    return list(reversed(contigs))
+
+'''
+Perform merges
+
+@param the contigs_list with overlap
+@param the original contigs
+@return the new contigs
+'''
+def merge_contigs(contigs_list, contigs):
+    new_contigs = []
+    for c in contigs_list:
+        new = ''
+        # Each list element is [contig, prefix-overlap with previous]
+        for j in c:
+            if contigs is not None and j[0] in contigs:
+                contigs.remove(j[0])
+            new += j[0][j[1]:]
+        new_contigs.append(new)
+
+    if contigs is not None:
+        for c in contigs:
+            new_contigs.append(c)
+
+    return new_contigs
+
+'''
+Reverse reads dictionary
+
+@param reads_dict is the reads dictionary
+@return the reversed dictionary with {contig: [[r_1,o_1],...]}
+'''
+def reverse_reads_dict(reads_dict):
+    reverse_dict = {}
+    for r in reads_dict:
+        for pair in reads_dict[r]:
+            if pair[0] not in reverse_dict:
+                reverse_dict[pair[0]] = []
+            reverse_dict[pair[0]].append([r,pair[1]])
+
+    return reverse_dict
 
 '''
 Change position of reads during a merge
 
-@param reads_dict is the dictionary of reads (assuming {read: [s, o]})
-@param contig1 is the offset for contig1 merged
-@param contig2 is the offset for contig2 merged
-@param new_s is the new offset to use for the contig (updated s)
-@param contig1_length is the length of contig1 (to compute new offsets)
+@param reverse_dict is the dictionary of reads (assuming {read: [[s, o]]})
+@param reads_dict is the original dictionary
+@param contigs_list are the list of contigs to be joined and their overlap
+@param contigs are the original contigs list
 
-@return reads_dict once updated
+@return new_reads_dict once updated
 '''
-def change_reads_on_merge(reads_dict, contig1, contig2, new_s, contig1_length):
+def change_reads_on_merge(reverse_dict, reads_dict, contigs_list, contigs, new_contigs):
+    new_reads_dict = {}
+    read_length = len(contigs[0])
 
-    for read in reads_dict:
-        for i in range(len(reads_dict[read])):
-        # If in first contig just need to change contig_pos (s)
-        if reads_dict[read][i][0] == contig1:
-            reads_dict[read][i][0] = new_s
-        # If in second contig need to change s and o
-        elif reads_dict[read][i][0] == contig2:
-            reads_dict[read][i][0] = new_s
-            reads_dict[read][i][1] = contig1_length + reads_dict[read][1] - OVERLAP_LENGTH - 1
+    for s in range(len(contigs_list)):
+        o = 0
+        for i in range(len(contigs_list[s])):
+            for reads in reverse_dict[contigs.index(contigs_list[s][i][0])]:
+                if reads[0] not in new_reads_dict:
+                    new_reads_dict[reads[0]] = []
+                if [s,o + reads[1]] not in new_reads_dict[reads[0]]:
+                    new_reads_dict[reads[0]].append([s,o + reads[1]])
+            if i < len(contigs_list[s]) - 1:
+                o += (read_length - contigs_list[s][i+1][1])
 
-    return reads_dict
+    for i in reads_dict:
+        if i not in new_reads_dict:
+            new_reads_dict[i] = []
+            for j in reads_dict[i]:
+                new_reads_dict[i].append([new_contigs.index(contigs[j[0]]),j[1]])
+            
+    return new_reads_dict
 
 
 
