@@ -21,7 +21,16 @@ from collections import Counter
 
 
 '''
-Main function to compute new consensus sequence.
+Main function to compute new consensus sequence
+
+@param reads_dict is the dictionary of reads with mappings to [s,o] placements
+@return the new contig list
+'''
+def run_consensus(reads):
+    frequency_info = consensus_sequence(reads)
+    return compute_new_contigs(frequency_info)
+
+'''
 Creates data structure object and iterates through each read to 
 get a consensus sequence information.
 

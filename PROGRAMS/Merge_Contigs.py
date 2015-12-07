@@ -22,6 +22,24 @@ would occur.  Think I'm going to write this function with a test case.
 from collections import Counter
 
 '''
+Run a merge contigs with default overlap_length of 15.
+
+@param is the contigs list
+@param is the reads list
+
+@ return the new contigs list and reads list
+'''
+def run_merge(contigs, reads):
+    contig_dict = merge_check_global(contigs)
+    bbr = suffix_filter(contigs_dict)
+    bbl = extract_bbl(bbr)
+    contig_trace = trace_contigs(bbl)
+    new_contigs = merge_contigs(contig_trace, contigs[:])
+    reverse_reads_dict = reverse_reads_dict(reads)
+    new_reads = change_reads_on_merge(reverse_reads_dict, reads, contig_trace, contigs, new_contigs)
+    return new_contigs, new_reads
+
+'''
 Checks all nchoosek(contig_length,2) contigs using merge_check_local() to see which contigs
 should be merged using merge_contigs()
 
