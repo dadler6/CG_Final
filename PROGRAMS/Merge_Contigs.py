@@ -194,7 +194,7 @@ def reverse_reads_dict(reads_dict):
         for pair in reads_dict[r]:
             if pair[0] not in reverse_dict:
                 reverse_dict[pair[0]] = []
-            reverse_dict[pair[0]].append([r,pair[1]])
+            reverse_dict[pair[0]].append([r,pair[1],pair[2]])
 
     return reverse_dict
 
@@ -218,8 +218,8 @@ def change_reads_on_merge(reverse_dict, reads_dict, contigs_list, contigs, new_c
             for reads in reverse_dict[contigs.index(contigs_list[s][i][0])]:
                 if reads[0] not in new_reads_dict:
                     new_reads_dict[reads[0]] = []
-                if [s,o + reads[1]] not in new_reads_dict[reads[0]]:
-                    new_reads_dict[reads[0]].append([s,o + reads[1]])
+                if [s,o + reads[1],reads[2]] not in new_reads_dict[reads[0]]:
+                    new_reads_dict[reads[0]].append([s,o + reads[1],reads[2]])
             if i < len(contigs_list[s]) - 1:
                 o += (read_length - contigs_list[s][i+1][1])
 
@@ -227,7 +227,7 @@ def change_reads_on_merge(reverse_dict, reads_dict, contigs_list, contigs, new_c
         if i not in new_reads_dict:
             new_reads_dict[i] = []
             for j in reads_dict[i]:
-                new_reads_dict[i].append([new_contigs.index(contigs[j[0]]),j[1]])
+                new_reads_dict[i].append([new_contigs.index(contigs[j[0]]),j[1],j[2]])
             
     return new_reads_dict
 
