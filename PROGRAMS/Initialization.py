@@ -9,16 +9,25 @@ Initialization
 from random import randint
 
 CONTIG_LENGTH = 10000
-
+DEFAULT_PROB = .01
 def _process(f):
+    '''
+        reads dictionary maps read -> [ [s_1,o_1,p_1],[s_2,o_1,p_2],...[s_n,o_n,p_n] ]
+            where n is the number of mappings of different reads from different viruses but are the same sequence
+        @param f: file of reads
+        @return: reads_dict
+    '''
+
     reads = _read_fa_file(f)
     reads_dict = {} # map read -> [s,o]
     for r in reads:
-        reads_dict[r] = []
+        if r not in reads_dict:
+            reads_dict[r] = []
+        l = []
         s = randint(1,7) # randomly assign read to one of the 7 contigs
         o = randint(0,CONTIG_LENGTH-len(r)+1)
-        reads_dict[r].append(s)
-        reads_dict[r].append(o)
+        l.append(s),l.append(o),l.append(DEFAULT_PROB)
+        reads_dict[r].append(l)
     return reads_dict
 def _read_fa_file(f):
     '''

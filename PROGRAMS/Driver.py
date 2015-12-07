@@ -19,6 +19,7 @@ def _main():
     likelihood_new = 100
     while abs(abs(likelihood) - abs(likelihood_new)) > 1: # until likelihood converges
         likelihood = likelihood_new
+        print likelihood
         reads_dict = rm.map_reads(reads_dict, contigs)
         contigs = cs.consensus_sequence(reads_dict)
         contigs = mc.merge_check_global(contigs,reads_dict) # how do we know if a merge has happened..do we need to know?
