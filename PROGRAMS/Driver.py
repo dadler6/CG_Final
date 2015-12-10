@@ -19,8 +19,8 @@ def _main():
     contigs = cs.run_consensus(reads_dict)
     likelihood = 0
     likelihood_new = 0
-    contig_file = open('../SRC_OUTPUT/trial_three/contig.txt', 'w+')
-    ll_file = open('../SRC_OUTPUT/trial_three/likelihood.txt', 'w+')
+    contig_file = open('../SRC_OUTPUT/trial_four/contig.txt', 'w+')
+    ll_file = open('../SRC_OUTPUT/trial_four/likelihood.txt', 'w+')
     likelihood_list = []
     #while abs(abs(likelihood) - abs(likelihood_new)) > 1: # until likelihood converges
     for i in range(NUM_ITERS):

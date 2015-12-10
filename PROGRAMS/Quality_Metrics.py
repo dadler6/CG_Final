@@ -28,6 +28,7 @@ def _percent_change_of_contigs():
     '''
         Evaluate percent chance of each contig over time steps.
         Use edit distance to show this.
+
     '''
 
     f = open('../SRC_OUTPUT/trial_three/contig.txt', 'r')
@@ -49,7 +50,11 @@ def _percent_change_of_contigs():
 
 def edDistDp(x, y):
     """ Calculate edit distance between sequences x and y using
-        matrix dynamic programming.  Return distance. """
+        matrix dynamic programming.  Return distance.
+
+    citation: http://nbviewer.ipython.org/github/BenLangmead/comp-genomics-class/blob/master/notebooks/CG_DP_EditDist.ipynb
+
+    """
     D = np.zeros((len(x)+1, len(y)+1), dtype=int)
     D[0, 1:] = range(1, len(y)+1)
     D[1:, 0] = range(1, len(x)+1)
@@ -59,9 +64,25 @@ def edDistDp(x, y):
             D[i, j] = min(D[i-1, j-1]+delt, D[i-1, j]+1, D[i, j-1]+1)
     return D[len(x), len(y)]
 
+def _create_change_in_contigs_figure(f):
+    c_1,c_2,c_3,iters= [],[],[],[]
+    for i,l in enumerate(f):
+        w = l.split(' ')
+        if len(w) > 0:
+            c_1.append(int(w[0])), c_2.append(int(w[1])), c_3.append(int(w[2]))
+fifi            iters.append(i)
+    plt.plot(np.array(iters),np.array(c_1), label ='contig one')
+    plt.plot(np.array(iters),np.array(c_2), label ='contig two')
+    plt.plot(np.array(iters),np.array(c_3), label ='contig three')
+    plt.xlabel('Iteration')
+    plt.ylabel('Edit Distance')
+    plt.show()
+
+
 def _driver():
     #f = open('../SRC_OUTPUT/trial_one/likelihood.txt', 'r')
     #_create_likelihood_figure(_process_likelihood_output_file(f))
-    _percent_change_of_contigs()
-
+    #_percent_change_of_contigs()
+    f = open('../SRC_OUTPUT/trial_three/change_in_contigs_data.txt', 'r')
+    _create_change_in_contigs_figure(f)
 _driver()
