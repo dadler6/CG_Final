@@ -71,9 +71,9 @@ class Test_Merge_Contigs(unittest.TestCase):
 
     # Test reverse reads
     def test_read_reverse_1(self):
-        reads_dict_1 = {'AAAAT':[[0,0,0.5]],'AAATC':[[0,1,0.5]],'AATCA':[[0,2,0.5],[1,0,0.5]],'ATCAG':[[1,1,0.5]],'TTTTT':[[2,0,0.5]]}
+        reads_dict_1 = {'AAAAT':[[0,0,0.5,1]],'AAATC':[[0,1,0.5,1]],'AATCA':[[0,2,0.5,1],[1,0,0.5,1]],'ATCAG':[[1,1,0.5,1]],'TTTTT':[[2,0,0.5,1]]}
         reverse_dict_test_1 = mc.reverse_reads_dict(reads_dict_1)
-        reverse_dict_truth_1 = {0:[['AAAAT',0,0.5],['AAATC',1,0.5],['AATCA',2,0.5]],1:[['AATCA',0,0.5],['ATCAG',1,0.5]],2:[['TTTTT',0,0.5]]}
+        reverse_dict_truth_1 = {0:[['AAAAT',0,0.5,1],['AAATC',1,0.5,1],['AATCA',2,0.5,1]],1:[['AATCA',0,0.5,1],['ATCAG',1,0.5,1]],2:[['TTTTT',0,0.5,1]]}
         for i in reverse_dict_test_1:
             for j in reverse_dict_test_1[i]:
                 self.assertTrue(j in reverse_dict_truth_1[i])
@@ -86,11 +86,21 @@ class Test_Merge_Contigs(unittest.TestCase):
         bbl_test_1 = mc.extract_bbl(bbr_test_1)
         contig_trace_test_1 = mc.trace_contigs(bbl_test_1)
         new_contigs_test_1 = mc.merge_contigs(contig_trace_test_1, c_1[:])
-        reads_dict_1 = {'AAAAT':[[0,0,0.5]],'AAATC':[[0,1,0.5]],'AATCA':[[0,2,0.5],[1,0,0.5]],'ATCAG':[[1,1,0.5]],'TTTTT':[[2,0,0.5]]}
+        reads_dict_1 = {'AAAAT':[[0,0,0.5,1]],'AAATC':[[0,1,0.5,1]],'AATCA':[[0,2,0.5,1],[1,0,0.5,1]],'ATCAG':[[1,1,0.5,1]],'TTTTT':[[2,0,0.5,1]]}
         reverse_dict_test_1 = mc.reverse_reads_dict(reads_dict_1)
         new_reads_dict_test_1 = mc.change_reads_on_merge(reverse_dict_test_1, reads_dict_1, contig_trace_test_1, c_1, new_contigs_test_1)
-        new_reads_dict_truth_1 = {'ATCAG': [[0,3,0.5]], 'AATCA': [[0,2,0.5]], 'AAAAT': [[0,0,0.5]], 'TTTTT': [[1,0,0.5]], 'AAATC': [[0,1,0.5]]}
+        new_reads_dict_truth_1 = {'ATCAG': [[0,3,0.5,1]], 'AATCA': [[0,2,0.5,1]], 'AAAAT': [[0,0,0.5,1]], 'TTTTT': [[1,0,0.5,1]], 'AAATC': [[0,1,0.5,1]]}
         self.assertEqual(new_reads_dict_truth_1, new_reads_dict_test_1)
+
+    # Test Run through
+    def test_run(self):
+        c_1 = ['AAAATCA', 'AATCAGG', 'TTTTTTT']
+        reads_dict_1 = {'AAAAT':[[0,0,0.5,1]],'AAATC':[[0,1,0.5,1]],'AATCA':[[0,2,0.5,1],[1,0,0.5,1]],'ATCAG':[[1,1,0.5,1]],'TTTTT':[[2,0,0.5,1]]}
+        new_contigs_test_1, new_reads_test_1 = mc.run_merge(c_1,reads_dict_1,3)
+        new_contigs_truth_1 = ['AAAATCAGG','TTTTTTT']
+        new_reads_dict_truth_1 = {'ATCAG': [[0,3,0.5,1]], 'AATCA': [[0,2,0.5,1]], 'AAAAT': [[0,0,0.5,1]], 'TTTTT': [[1,0,0.5,1]], 'AAATC': [[0,1,0.5,1]]}
+        self.assertEqual(new_reads_dict_truth_1, new_reads_test_1)
+        self.assertEqual(new_contigs_truth_1,new_contigs_test_1)
 
 if __name__ == '__main__':
     unittest.main()

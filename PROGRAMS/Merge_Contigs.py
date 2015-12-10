@@ -27,18 +27,20 @@ Run a merge contigs with default overlap_length of 15.
 @param is the contigs list
 @param is the reads list
 
-@ return the new contigs list and reads list
+@return the new contigs list and reads list
 '''
-def run_merge(contigs, reads):
-    contig_dict = merge_check_global(contigs)
+def run_merge(contigs, reads, OVERLAP_LENGTH = 15):
+    contig_dict = merge_check_global(contigs, OVERLAP_LENGTH)
     if contig_dict == []:
         return contigs, reads
     bbr = suffix_filter(contig_dict)
     bbl = extract_bbl(bbr)
     contig_trace = trace_contigs(bbl)
     new_contigs = merge_contigs(contig_trace, contigs[:])
-    reverse_reads_dict = reverse_reads_dict(reads)
-    new_reads = change_reads_on_merge(reverse_reads_dict, reads, contig_trace, contigs, new_contigs)
+    reverse_reads = reverse_reads_dict(reads)
+    new_reads = change_reads_on_merge(reverse_reads, reads, contig_trace, contigs, new_contigs)
+    print(contigs)
+    print(new_reads)
     return new_contigs, new_reads
 
 '''
@@ -50,7 +52,7 @@ should be merged using merge_contigs()
 
 @return the overlaps or a blank list
 '''
-def merge_check_global(contig_list, OVERLAP_LENGTH = 15):
+def merge_check_global(contig_list, OVERLAP_LENGTH):
     # Merge will be 0, and a 1 is added each time merge_local() comes back as a needed merge
     merge = 0
     # Dictionary to hold permutations
@@ -197,7 +199,7 @@ def reverse_reads_dict(reads_dict):
         for pair in reads_dict[r]:
             if pair[0] not in reverse_dict:
                 reverse_dict[pair[0]] = []
-            reverse_dict[pair[0]].append([r,pair[1],pair[2]])
+            reverse_dict[pair[0]].append([r,pair[1],pair[2],pair[3]])
 
     return reverse_dict
 
@@ -221,8 +223,8 @@ def change_reads_on_merge(reverse_dict, reads_dict, contigs_list, contigs, new_c
             for reads in reverse_dict[contigs.index(contigs_list[s][i][0])]:
                 if reads[0] not in new_reads_dict:
                     new_reads_dict[reads[0]] = []
-                if [s,o + reads[1],reads[2]] not in new_reads_dict[reads[0]]:
-                    new_reads_dict[reads[0]].append([s,o + reads[1],reads[2]])
+                if [s,o + reads[1],reads[2],reads[3]] not in new_reads_dict[reads[0]]:
+                    new_reads_dict[reads[0]].append([s,o + reads[1],reads[2],reads[3]])
             if i < len(contigs_list[s]) - 1:
                 o += (read_length - contigs_list[s][i+1][1])
 
@@ -230,7 +232,7 @@ def change_reads_on_merge(reverse_dict, reads_dict, contigs_list, contigs, new_c
         if i not in new_reads_dict:
             new_reads_dict[i] = []
             for j in reads_dict[i]:
-                new_reads_dict[i].append([new_contigs.index(contigs[j[0]]),j[1],j[2]])
+                new_reads_dict[i].append([new_contigs.index(contigs[j[0]]),j[1],j[2],j[3]])
             
     return new_reads_dict
 

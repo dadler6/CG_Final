@@ -35,7 +35,9 @@ def readGenomeData(genome):
     output_genome = []
     for i in g:
         if i[0] != ">":
-            output_genome.append(i)
+            output_genome.append([i,curr])
+        else:
+            curr = i[1:]
     return output_genome
 
 '''
@@ -52,12 +54,12 @@ def addError(p, genomes):
         g_number = random.randint(0,len(genomes) - 1)
         # Choose random offset
         nt_number = random.randint(0,len(genomes[0]) - 1)
-        nt = genomes[g_number][nt_number]
+        nt = genomes[g_number][0][nt_number]
         nts.remove(nt)
         replacement_nt = random.choice(nts)
-        g = list(genomes[g_number])
+        g = list(genomes[g_number][0])
         g[nt_number] = replacement_nt
-        genomes[g_number] = ''.join(g)
+        genomes[g_number][0] = ''.join(g)
     return genomes
 
 '''
@@ -68,8 +70,8 @@ Format output
 def formatOutput(genome):
     g = ''
     for i in range(len(genome)):
-        g += '>' + str(i+1) + '\n'
-        g += genome[i] + '\n'
+        g += '>' + str(genome[i][1]) + '\n'
+        g += genome[i][0] + '\n'
     return g
 
 '''

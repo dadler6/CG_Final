@@ -25,13 +25,13 @@ def _process(f):
     reads = _read_fa_file(f)
     reads_dict = {} # map read -> [s,o]
     for r in reads:
-        if r not in reads_dict:
-            reads_dict[r] = []
+        if r[0] not in reads_dict:
+            reads_dict[r[0]] = []
         l = []
         s = randint(0,NUM_CONTIGS - 1) # randomly assign read to one of the 7 contigs
         o = randint(0,CONTIG_LENGTH-len(r)+1)
-        l.append(s),l.append(o),l.append(-math.log(DEFAULT_PROB))
-        reads_dict[r].append(l)
+        l.append(s),l.append(o),l.append(-math.log(DEFAULT_PROB)),l.append(r[1])
+        reads_dict[r[0]].append(l)
     return reads_dict
 def _read_fa_file(f):
     '''
@@ -40,7 +40,9 @@ def _read_fa_file(f):
     reads = []
 
     for i,l in enumerate(f):
+        if l[0] == '>':
+            curr = l[1:-1]
         w = l.strip().split()
         if len(w) > 0:
-            if i%2 == 1: reads.append(''.join(w))
+            if i%2 == 1: reads.append([''.join(w),curr])
     return reads
