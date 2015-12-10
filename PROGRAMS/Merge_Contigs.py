@@ -83,6 +83,7 @@ another string.
 def suffixPrefixMatch(str1, str2, min_overlap):
     ''' Returns length of longest suffix of str1 that is prefix of
         str2, as long as that suffix is at least as long as min_overlap. '''
+    print str2
     if len(str2) < min_overlap: return 0
     str2_prefix = str2[:min_overlap]
     str1_pos = -1

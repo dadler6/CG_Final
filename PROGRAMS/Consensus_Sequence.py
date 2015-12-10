@@ -1,4 +1,4 @@
-c'''
+'''
 Dan Adler, Farhan Damani
 Computational Genomics Final
 
