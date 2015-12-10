@@ -40,5 +40,3 @@ def _read_fa_file(f):
         if len(w) > 0:
             if i%2 == 1: reads.append(''.join(w))
     return reads
-
-_process()
