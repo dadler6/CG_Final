@@ -39,8 +39,6 @@ def run_merge(contigs, reads, OVERLAP_LENGTH = 15):
     new_contigs = merge_contigs(contig_trace, contigs[:])
     reverse_reads = reverse_reads_dict(reads)
     new_reads = change_reads_on_merge(reverse_reads, reads, contig_trace, contigs, new_contigs)
-    print(contigs)
-    print(new_reads)
     return new_contigs, new_reads
 
 '''
@@ -75,6 +73,7 @@ def merge_check_global(contig_list, OVERLAP_LENGTH):
 '''
 Finds the longest suffix that is a prefix of
 another string.
+Code was taken from Ben's github (also used on HW4)
 @param str1 is the string whose suffix will be checked
 @param str2 is the string whose prefix will be checked
 @param min_overlap is the minimum overlap length
