@@ -9,24 +9,27 @@ import Consensus_Sequence as cs
 import Read_Mapping as rm
 import Merge_Contigs as mc
 import Likelihood as ll
+import Quality_Metrics as qm
 
+NUM_ITERS = 20
 def _main():
 
-    f = open('../DATA/0_wuhan_input.txt', 'r')
+    f = open('../DATA/reads_25000.fa', 'r')
     reads_dict = init._process(f)
     contigs = cs.run_consensus(reads_dict)
     likelihood = 0
-    likelihood_new = 100
-    contig_file = open('../SRC_OUTPUT/trial_one/contig.txt', 'w+')
-    ll_file = open('../SRC_OUTPUT/trial_one/likelihood.txt', 'w+')
+    likelihood_new = 0
+    contig_file = open('../SRC_OUTPUT/trial_two/contig.txt', 'w+')
+    ll_file = open('../SRC_OUTPUT/trial_two/likelihood.txt', 'w+')
+    likelihood_list = []
     #while abs(abs(likelihood) - abs(likelihood_new)) > 1: # until likelihood converges
-    for i in range(1000):
+    for i in range(NUM_ITERS):
         for c in contigs:
             contig_file.write('%s\tstart%s\t' %(str(i),str(c)))
         contig_file.write('\n')
         contig_file.flush()
-        ll_file.write('%s\t%s\t%s\n' %(str(i), str(likelihood), str(len(contigs))))
-        ll_file.flush()
+        ll_file.write('%s\t%s\t%s\n' %(str(i), str(likelihood), str(len(contigs)))), ll_file.flush()
+        likelihood_list.append(float(likelihood))
         likelihood = likelihood_new
         reads_dict = rm.run(reads_dict, contigs)
         contigs = cs.run_consensus(reads_dict)
@@ -39,7 +42,9 @@ def _main():
 
     for c in contigs:
         contig_file.write('1000\tend%s\t' %(str(c)))
-    ll_file.write('1000\t%s\t%s\n' %(str(likelihood), str(len(contigs))))
-    ll_file.flush()
+    ll_file.write('%s\t%s\t%s\n' %(str(NUM_ITERS), str(likelihood), str(len(contigs)))), ll_file.flush()
+    likelihood_list.append(likelihood)
+    qm._create_likelihood_figure(likelihood_list)
+
 
 _main()
