@@ -33,7 +33,7 @@ def run_merge(contigs, reads):
     contig_dict = merge_check_global(contigs)
     if contig_dict == []:
         return contigs, reads
-    bbr = suffix_filter(contigs_dict)
+    bbr = suffix_filter(contig_dict)
     bbl = extract_bbl(bbr)
     contig_trace = trace_contigs(bbl)
     new_contigs = merge_contigs(contig_trace, contigs[:])
@@ -83,7 +83,7 @@ another string.
 def suffixPrefixMatch(str1, str2, min_overlap):
     ''' Returns length of longest suffix of str1 that is prefix of
         str2, as long as that suffix is at least as long as min_overlap. '''
-    print str2
+    #print str2
     if len(str2) < min_overlap: return 0
     str2_prefix = str2[:min_overlap]
     str1_pos = -1
