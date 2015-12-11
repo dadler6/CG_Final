@@ -82,7 +82,7 @@ def _create_change_in_contigs_figure(f):
 
 def create_scatterplot():
     '''
-        Create a scatterplot of k-mer positions at contig offsets
+        Create a boxplot of k-mer positions at contig offsets
     '''
     f = open('../SRC_OUTPUT/Dan_trial_two/Dan_trial_two_reads_0.txt', 'r') # random data initialized
     f2 = open('../SRC_OUTPUT/Dan_trial_two/Dan_trial_two_reads_20.txt', 'r') # after 20 iters

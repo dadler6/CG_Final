@@ -78,7 +78,9 @@ In addition, contigs are randomly created by mapping reads to random locations, 
 
 iii) Read_Mapping.py are the functions used to initialize a read mapping step.  A full read mapping can be run using the method:
 
-Read_Mapping.run(reads_dict, contigs) where reads_dict is a read_dict as specified above, and contigs is the current contigs list.  Essentially, each read is aligned to its optimal alignment in the contigs, and likelihood is computed at that alignment.  If the likelihood is large enough, we use approximate inference to except/reject the new mapping.  Other methods defined are the distributions to compute the probabilities, and the optimal alignment.  The output is an updated dictionary with new mappings.
+Read_Mapping.run(reads_dict, contigs) where reads_dict is a read_dict as specified above, and contigs is the current contigs list.  Essentially, each read is aligned to its optimal alignment in the contigs, and we compute the joint probability of all variables at that alingment position (i.e. the likelihood). If the likelihood at that position is greater than the likelihood for the same read at the previous time step, then we map the read to this new position. If the new likelihood is not greater, than we use an approximate inference procedure to accept/reject the new mapping (see write-up for details on this). Other methods define various distributions used to compute probabilities. Lastly, we compute the optimal alignment using the hamming distance.
+
+The output is an updated dictionary with the new mappings to all the latent variables.
 
 iv) Consensus_Sequence.py goes is used to update the contigs. It can be run using the method:
 
@@ -112,7 +114,7 @@ python Test_Merge_Contigs.py
 
 d) Analysis files
 
-i) QualityMetrics.py can be run during Driver.py to create plot figures to evaluate the percent change over contigs over time steps.  It uses edit distance from Ben’s Github to do so from:
+i) QualityMetrics.py can be run during Driver.py to create plot figures to evaluate the percent change over contigs over time steps and to create the boxplot and other figures. The percent change function uses edit distance from Ben’s Github to do so from:
 
 http://nbviewer.ipython.org/github/BenLangmead/comp-genomics-class/blob/master/notebooks/CG_DP_EditDist.ipynb
 
@@ -144,8 +146,12 @@ The last file type is the Dan_trial_y_reads_x.txt file, which are outputs of Rea
 
 Contains various figures utilized within our presentation and write-up.
 
+
+=============================================================================================
 Group members did:
 
 Dan Adler helped with the initial modeling of the algorithm to actually create the simple distributions to be used.  He came up with the idea of utilizing a geometric prior for the number of contigs distribution, and created/found all of the input data that was used for running the algorithm and the analysis.  Dan also was in charge of writing/testing the merge and consensus sequence steps of the algorithm, and also analyzed the read mapping data to see how reads were distributed within different portions of the algorithm.  Lastly, Dan created the README.txt and wrote various portions of the report.
 
-Farina Damani helped come up with the initial idea through finding the Laserson paper.  He also setup a meeting for the team with Dr. Alexis Battle to help figure out realistic distributions for modeling and simplifying the Laserson paper.  In addition, Farhan gave the second check-in when Dan was out of the area, and helped model the initial algorithm.  He also explored various approximate inference techniques that could help with the inference procedure for the assemblers, coded the read mapping file, and helped create the various figures and chapters in the final report.
+Farhan Damani came up with the idea and found the Laserson paper. After setting up a meeting with Dr. Alexis Battle, Farhan incorporated Dr. Battle’s advice and later designed the graphical model, including assumptions, priors, and dependencies. Farhan explored approximate inference techniques to make probability computations tractable and identified the key algorithmic steps from the Laserson paper that should be used in the model. He wrote out the math that was necessary for implementation and coded the initialization, driver, and probabilistic algorithmic step (read mapping), requiring likelihood computations, local alignment, sampling through approximate inference techniques, and a scoring scheme to compute the joint probability of x and y. Lastly, he analyzed likelihood convergence, how the contigs evolved over time-steps, and wrote significant portions of the write-up and the slides.
+
+
