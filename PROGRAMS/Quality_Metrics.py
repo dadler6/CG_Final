@@ -70,12 +70,69 @@ def _create_change_in_contigs_figure(f):
         w = l.split(' ')
         if len(w) > 0:
             c_1.append(int(w[0])), c_2.append(int(w[1])), c_3.append(int(w[2]))
-fifi            iters.append(i)
+            iters.append(i)
     plt.plot(np.array(iters),np.array(c_1), label ='contig one')
     plt.plot(np.array(iters),np.array(c_2), label ='contig two')
     plt.plot(np.array(iters),np.array(c_3), label ='contig three')
     plt.xlabel('Iteration')
     plt.ylabel('Edit Distance')
+    plt.legend(loc='lower left')
+    plt.show()
+
+
+def create_scatterplot():
+    '''
+        Create a scatterplot of k-mer positions at contig offsets
+    '''
+    f = open('../SRC_OUTPUT/Dan_trial_two/Dan_trial_two_reads_0.txt', 'r') # random data initialized
+    f2 = open('../SRC_OUTPUT/Dan_trial_two/Dan_trial_two_reads_20.txt', 'r') # after 20 iters
+
+    labels_0,labels_20, data_0,data_20 = [],[],[],[]
+    for i,l in enumerate(f):
+        if i == 0: continue
+        w = l.split(' ')
+        if len(w) > 0:
+            label = w[0]+','+w[1].split('-')[0]
+
+            #label = w[0]+','+w[1][:-1]
+            data = []
+            for n in w[2:]: data.append(int(n))
+            labels_0.append(label), data_0.append(data)
+    for i,l in enumerate(f2):
+        if i == 0: continue
+        w = l.split(' ')
+        if len(w) > 0:
+            #label = w[0]+','+w[1][:-1]
+            label = w[0]+','+w[1].split('-')[0]
+
+            data = []
+            if len(w) > 3:
+                for n in w[2:]: data.append(int(n))
+            else:
+                data.append([])
+            labels_20.append(label), data_20.append(data)
+
+
+
+    plt.figure()
+    plt.boxplot(data_0)
+    plt.xlabel('Contig, Offset Bin')
+    plt.ylabel('K-mer Offset')
+    iters = []
+    for i in range(len(data_0)): iters.append(i)
+
+
+    plt.xticks(iters,labels_0, rotation='45')
+
+    plt.show()
+
+
+    plt.figure()
+    plt.boxplot(data_20)
+    plt.xlabel('Contig, Offset Bin')
+    plt.ylabel('K-mer Offset')
+    plt.xticks(iters,labels_20, rotation='45')
+
     plt.show()
 
 
@@ -83,6 +140,7 @@ def _driver():
     #f = open('../SRC_OUTPUT/trial_one/likelihood.txt', 'r')
     #_create_likelihood_figure(_process_likelihood_output_file(f))
     #_percent_change_of_contigs()
-    f = open('../SRC_OUTPUT/trial_three/change_in_contigs_data.txt', 'r')
-    _create_change_in_contigs_figure(f)
+    #f = open('../figures/change_in_contigs_data.txt', 'r')
+    #_create_change_in_contigs_figure(f)
+    create_scatterplot()
 _driver()
