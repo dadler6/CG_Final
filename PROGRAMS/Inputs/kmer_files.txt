@@ -1,1 +1,0 @@
-../DATA/KMers/wuhanaphivirus_kmers_20.fa

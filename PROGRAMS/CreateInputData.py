@@ -5,10 +5,10 @@ Computational Genomics Final
 CreateTestOutput.py
 
 COMMAND:
-python CreateInputData.py k input.fa output.fa n
+python CreateInputData.py k input.fa output.fa k
 
 Takes a genome (all caps no spaces) and
-randomly samples n reads of length k from that genome.
+samples all k-mers from that genome from that genome.
 '''
 
 # Imports

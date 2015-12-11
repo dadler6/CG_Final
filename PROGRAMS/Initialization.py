@@ -16,7 +16,7 @@ K_MER = 100
 
 def _process(f):
     '''
-        reads dictionary maps read -> [ [s_1,o_1,p_1],[s_2,o_1,p_2],...[s_n,o_n,p_n] ]
+        reads dictionary maps read -> [ [s_1,o_1,p_1,offset],[s_2,o_1,p_2,offest],...[s_n,o_n,p_n,offset] ]
             where n is the number of mappings of different reads from different viruses but are the same sequence
         @param f: file of reads
         @return: reads_dict
