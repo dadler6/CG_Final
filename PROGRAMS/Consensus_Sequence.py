@@ -9,33 +9,22 @@ Returns new contig list based upon that.
 
 Methods:
 1. consensus_sequence()
-2. compute_new_contigs
+2. compute_new_contigs()
+3. run_consensus()
 
-USES the followign dictionary data structure (dictionary within dictionary)
+USES the following dictionary data structure (dictionary within dictionary)
 Could imagine it's like a tree
 { CONTIG : {OFFSET : Counter()} }
 '''
 
-# IMPROTS
+# IMPORTS
 from collections import Counter
-
-
-'''
-Main function to compute new consensus sequence
-
-@param reads_dict is the dictionary of reads with mappings to [s,o] placements
-@return the new contig list
-'''
-def run_consensus(reads):
-    frequency_info = consensus_sequence(reads)
-    return compute_new_contigs(frequency_info)
 
 '''
 Creates data structure object and iterates through each read to 
 get a consensus sequence information.
 
 @param reads_dict is a current dictionary with {read : [[s1, o1],...]}
-
 @return the frequency information for each contig
 '''
 def consensus_sequence(reads_dict):
@@ -65,7 +54,6 @@ def consensus_sequence(reads_dict):
 Compute new contigs.
 
 @param the frequency_info structure with structure { CONTIG : {OFFSET : Counter()} }
-
 @return the new contig sequence
 '''
 def compute_new_contigs(frequency_info):
@@ -91,3 +79,14 @@ def compute_new_contigs(frequency_info):
         new_contigs.append(curr)
 
     return new_contigs
+
+
+'''
+Main function to compute new consensus sequence
+
+@param reads_dict is the dictionary of reads with mappings to [s,o] placements
+@return the new contig list
+'''
+def run_consensus(reads):
+    frequency_info = consensus_sequence(reads)
+    return compute_new_contigs(frequency_info)

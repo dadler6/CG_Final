@@ -143,4 +143,3 @@ def _driver():
     #f = open('../figures/change_in_contigs_data.txt', 'r')
     #_create_change_in_contigs_figure(f)
     create_scatterplot()
-_driver()

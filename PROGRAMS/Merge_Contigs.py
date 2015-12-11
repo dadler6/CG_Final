@@ -2,44 +2,26 @@
 Dan Adler, Farhan Damani
 Computational Genomics Final
 
-Library for contig merging.  Contains 3 methods:
+Library for contig merging.
 
-1. merge_check_global() which goes through all n choose 2 contigs and checks whether a merge should occur
-2. merge_check_local() checks two contigs to see if a merge should occur
-3. merge_contigs() which performs an actual merge of contigs necessary to be merged
+Methods:
+1) merge_check_global()
+2) suffixPrefixMatch()
+3) suffix_filter()
+4) extract_bbl()
+5) trace_contigs()
+6) merge_contigs()
+7) reverse_reads_dict()
+8) change_reads_on_merge()
+9) run_merge() which runs everything above
 
-NEED: To somehow look at merged "paths" (meaning more than 2 contigs merged at once)...unless we can make
-      make this not happen
+Essentially the basic idea is that we are trying to merge contigs using an overlap graph
+and then map reads to new locations.
 
-NEED: To look at if there is a contig that aligns to two other contigs what happens
-
-IDEA for this.  Keep track of contigs to be merged in a list.  If it appears in a list that it will be merged
-look at how it would be merged twice.  I think I need like a merge 'prep' function step, where I look at how the merges
-would occur.  Think I'm going to write this function with a test case.
 '''
 
-# Global variables
+# IMPORTS
 from collections import Counter
-
-'''
-Run a merge contigs with default overlap_length of 15.
-
-@param is the contigs list
-@param is the reads list
-
-@return the new contigs list and reads list
-'''
-def run_merge(contigs, reads, OVERLAP_LENGTH = 15):
-    contig_dict = merge_check_global(contigs, OVERLAP_LENGTH)
-    if contig_dict == []:
-        return contigs, reads
-    bbr = suffix_filter(contig_dict)
-    bbl = extract_bbl(bbr)
-    contig_trace = trace_contigs(bbl)
-    new_contigs = merge_contigs(contig_trace, contigs[:])
-    reverse_reads = reverse_reads_dict(reads)
-    new_reads = change_reads_on_merge(reverse_reads, reads, contig_trace, contigs, new_contigs)
-    return new_contigs, new_reads
 
 '''
 Checks all nchoosek(contig_length,2) contigs using merge_check_local() to see which contigs
@@ -60,8 +42,10 @@ def merge_check_global(contig_list, OVERLAP_LENGTH):
         # Check if a merge is needed
         contig_dict[suffix] = Counter()
         for prefix in contig_list:
+            # Go through all prefixes for each suffix
             if prefix != suffix:
                 contig_dict[suffix][prefix] = suffixPrefixMatch(suffix, prefix, OVERLAP_LENGTH)
+                # If every overlap comes out to 0, this parameter remains at 0 (i.e. no merges need to occur)
                 merge += contig_dict[suffix][prefix]
 
     # Check if merge_contigs needs to occur
@@ -74,11 +58,12 @@ def merge_check_global(contig_list, OVERLAP_LENGTH):
 Finds the longest suffix that is a prefix of
 another string.
 Code was taken from Ben's github (also used on HW4)
+http://nbviewer.ipython.org/github/BenLangmead/comp-genomics-class/blob/master/projects/UnpairedAsmChallenge.ipynb
+
 @param str1 is the string whose suffix will be checked
 @param str2 is the string whose prefix will be checked
 @param min_overlap is the minimum overlap length
 @param OVERLAP_LENGTH (defaults to 15)
-
 @returns the length of the match
 '''
 def suffixPrefixMatch(str1, str2, min_overlap):
@@ -103,8 +88,11 @@ Suffix filter (i.e. choose greatest prefix match for a suffix)
 def suffix_filter(contig_dictionary):
     bbr = {}
 
+    # Go through each suffix
     for suffix in contig_dictionary:
+        # Check if there exists a match
         if len(contig_dictionary[suffix]) > 0:
+            # Get most common match
             c = contig_dictionary[suffix].most_common(1)
             if c[0][1] > 0:
                 bbr[suffix] = [c[0][0], c[0][1]]
@@ -121,13 +109,16 @@ Delete the other one.
 def extract_bbl(bbr):
     bbl_set = set()
     bbl = {}
+    # Find all possible left best buddies
     for p in bbr:
         bbl_set.add(bbr[p][0])
+    # Go through each one and take its right buddy
     for l in bbl_set:
         c = Counter()
         for p in bbr:
             if bbr[p][0] == l:
                 c[p] = bbr[p][1]
+        # Get most common and see if the bbl is unique, keep if it is.
         m = c.most_common(2)
         if len(m) > 1 and m[0][1] == m[1][1]:
             pass
@@ -139,7 +130,7 @@ def extract_bbl(bbr):
 Trace the new contigs.
 
 @param bbl is bbl dictonary
-@return the contigs
+@return contigs, the contig traces
 '''
 def trace_contigs(bbl):
     right = set()
@@ -179,7 +170,7 @@ def merge_contigs(contigs_list, contigs):
                 contigs.remove(j[0])
             new += j[0][j[1]:]
         new_contigs.append(new)
-
+    # Take unmerged/touched contigs and append them onto the list
     if contigs is not None:
         for c in contigs:
             new_contigs.append(c)
@@ -194,7 +185,9 @@ Reverse reads dictionary
 '''
 def reverse_reads_dict(reads_dict):
     reverse_dict = {}
+    # Go through each read
     for r in reads_dict:
+        # Take contig and make it key, then read gets added as a value
         for pair in reads_dict[r]:
             if pair[0] not in reverse_dict:
                 reverse_dict[pair[0]] = []
@@ -209,16 +202,18 @@ Change position of reads during a merge
 @param reads_dict is the original dictionary
 @param contigs_list are the list of contigs to be joined and their overlap
 @param contigs are the original contigs list
-
 @return new_reads_dict once updated
 '''
 def change_reads_on_merge(reverse_dict, reads_dict, contigs_list, contigs, new_contigs):
     new_reads_dict = {}
     read_length = len(contigs[0])
 
+    # Go through the contig traces
     for s in range(len(contigs_list)):
         o = 0
+        # Find the trace values
         for i in range(len(contigs_list[s])):
+            # Find reads that match up with that value and add them to the new dictionary
             for reads in reverse_dict[contigs.index(contigs_list[s][i][0])]:
                 if reads[0] not in new_reads_dict:
                     new_reads_dict[reads[0]] = []
@@ -226,7 +221,7 @@ def change_reads_on_merge(reverse_dict, reads_dict, contigs_list, contigs, new_c
                     new_reads_dict[reads[0]].append([s,o + reads[1],reads[2],reads[3]])
             if i < len(contigs_list[s]) - 1:
                 o += (read_length - contigs_list[s][i+1][1])
-
+    # Get reads that have not yet been added
     for i in reads_dict:
         if i not in new_reads_dict:
             new_reads_dict[i] = []
@@ -234,6 +229,26 @@ def change_reads_on_merge(reverse_dict, reads_dict, contigs_list, contigs, new_c
                 new_reads_dict[i].append([new_contigs.index(contigs[j[0]]),j[1],j[2],j[3]])
             
     return new_reads_dict
+
+'''
+Run a merge contigs with default overlap_length of 15.
+
+@param contigs is the contigs list
+@param reads is the reads list
+@param OVERLAP_LENGTH is the minimum length of an overlap we will accept
+@return the new contigs list and reads list
+'''
+def run_merge(contigs, reads, OVERLAP_LENGTH = 15):
+    contig_dict = merge_check_global(contigs, OVERLAP_LENGTH)
+    if contig_dict == []:
+        return contigs, reads
+    bbr = suffix_filter(contig_dict)
+    bbl = extract_bbl(bbr)
+    contig_trace = trace_contigs(bbl)
+    new_contigs = merge_contigs(contig_trace, contigs[:])
+    reverse_reads = reverse_reads_dict(reads)
+    new_reads = change_reads_on_merge(reverse_reads, reads, contig_trace, contigs, new_contigs)
+    return new_contigs, new_reads
 
 
 

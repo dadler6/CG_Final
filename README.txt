@@ -64,9 +64,12 @@ The following files are used to run the algorithm.  Specifics about the algorith
 i) Driver.py.  Simply can be run by typing:
 
 COMMAND:
-python Driver.py
+python Driver.py PATH_TO_INPUT/input.txt PATH_TO_OUTPUT_FOLDER iterations
 
-This runs the algorithm using the data specified by f = open(FILE) in the first line of the main.  It simply randomly creates contigs, and then under a certain number of iterations (specified by NUM_ITERS) maps the reads to their most likely alignment, computes new contigs, checks what needs to merged, and updates the likelihood.  The following files then are called by the Driver.
+Ex:
+python Driver.py ../DATA/1_wuhan_input_ordered.txt ../OUTPUT 20
+
+This runs the algorithm using the data specified by your input.txt in the first line of the main.  It simply randomly creates contigs, and then under a certain number of iterations (specified by NUM_ITERS) maps the reads to their most likely alignment, computes new contigs, checks what needs to merged, and updates the likelihood.  It saves output data (described below) on the contigs, likelihood and read mappings at each iteration in the output directory specified by argument 2.  Lastly, the third argument specifies the number of iterations the algorithm will conduct, which should change depending on the size of your dataset.  The following files then are called by the Driver.
 
 ii) Initialization.py
 
